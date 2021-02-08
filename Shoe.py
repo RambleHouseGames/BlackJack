@@ -6,13 +6,13 @@ from datetime import datetime
 Suite = Enum('Suite', 'CLUBS DIAMONDS HEARTS SPADES')
 Face = Enum('Face', 'A 2 3 4 5 6 7 8 9 10 J Q K')
 
+# represents one card in the deck
 class Card:
     def __init__(self, suite, face):
         self.Suite = suite
         self.Face = face
-        seed(datetime.now())
 
-    def GetDisplayString(self):
+    def GetDisplayString(self): # returns the unicode for the Suite and Face Value
         if(self.Suite == Suite.CLUBS):
             displayString = u'\u2663'
         elif(self.Suite == Suite.DIAMONDS):
@@ -22,17 +22,19 @@ class Card:
         elif(self.Suite == Suite.SPADES):
             displayString = u'\u2660'
         else:
-            raise Exception("Unrecognized Suite: " + self.Suite)
+            raise Exception("Unrecognized Suite: " + self.Suite) # Just incase someone draws the Ace of Horse Shoes
 
-        if(self.Face.name != '10'):
+        if(self.Face.name != '10'): # 10 is the only on thats 2 characters long
             displayString += ' '
         
         displayString += self.Face.name
 
         return displayString
     
+    # converts Face Values to integer point values.
+    # I know it looks a little brute forcy but I think its the best option in this situation
     def GetPointValue(self):
-        if(self.Face.name == 'A'):
+        if(self.Face.name == 'A'): # Soft Aces are handled by GameData in the GetPlayerPoints and GetDealerPoints Methods
             return 11
         elif(self.Face.name == '2'):
             return 2
@@ -59,25 +61,29 @@ class Card:
         elif(self.Face.name == 'K'):
             return 10
 
+# This is the Deck.  I called it a shoe incase I wanted to add multible decks later
 class Shoe:
     __instance = None
 
     @staticmethod
-    def getInstance():
+    def getInstance(): # Do that singleton dance
         if(Shoe.__instance == None):
             Shoe()
         return Shoe.__instance
 
     def __init__(self):
         Shoe.__instance = self
-        self.Cards = []
+        self.Cards = [] # cards go in here
+        seed(datetime.now()) # seed the random number generator to time
 
-    def Reshuffle(self):
+    # Fills the Cards Array with a full deck (it doesn't randomize them, the randomness happens when they are drawn)
+    def Reshuffle(self): 
         self.Cards = []
         for suite in Suite:
             for face in Face:
                 self.Cards.append(Card(suite, face))
 
+    # Removes a random card from the shoe and returns it
     def DrawRandom(self):
         randIndex = randint(0, len(self.Cards) - 1)
         randCard = self.Cards[randIndex]

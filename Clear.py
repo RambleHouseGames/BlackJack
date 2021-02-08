@@ -1,12 +1,14 @@
+# Clears the screen so that the game board can be redrawn
+# I have a Mac so the Windows Version is untested but I think system('cls') is right
+
 from os import system, name 
-  
-# define our clear function 
+
 def clear(): 
   
     # for windows 
     if name == 'nt': 
         _ = system('cls') 
   
-    # for mac and linux(here, os.name is 'posix') 
+    # for mac
     else: 
         _ = system('clear') 
